@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PublicationsModule } from './publications/publications.module';
+import { VerifytokenModule } from './verifytoken/verifytoken.module';
 
 @Module({
   imports: [
@@ -17,7 +18,8 @@ import { PublicationsModule } from './publications/publications.module';
       retryDelay: 3000,                                // En cada intento de conexion demora 3 ms
       retryAttempts: 10                                //10 intentos de conexion
     }),
-    PublicationsModule
+    PublicationsModule,
+    VerifytokenModule
   ],
   controllers: [],
   providers: [],

@@ -7,7 +7,7 @@ export class Publication{
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({ length: 200 })
+    @Column({ length: 200, default: 'anon' })
     name: string;
 
     @Column({ length: 800, default: 'Vacio' })
