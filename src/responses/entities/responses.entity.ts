@@ -2,11 +2,15 @@ import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateCol
 
 @Entity()
 export class Response{
+
     @PrimaryGeneratedColumn()
     id: number;
 
+    @Column({ type: "int" })
+    publication_id: number;
+
     @Column({ length: 200, default: 'anon' })
-    name: string;
+    author: string;
 
     @Column({ length: 800, default: 'Vacio' })
     description: string;

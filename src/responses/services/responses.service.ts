@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';  //??????
-import { Repository } from 'typeorm';                //????
+import { InjectRepository } from '@nestjs/typeorm';  
+import { Repository } from 'typeorm';             
 import { Response } from './../entities/responses.entity';
 
 
@@ -15,6 +15,10 @@ export class ResponsesService {
         return this.responsesRepo.find();
     }
 
+    findAllBy(publication_id: number){
+        return this.responsesRepo.find({ where : {publication_id}});
+    }
+
     findOne(id: number){
         return this.responsesRepo.findOne(id);
     }
@@ -24,7 +28,7 @@ export class ResponsesService {
         return this.responsesRepo.save(newResponse);
     }
 
-    async update(id: number, body: any){
+    async update(id: any, body: any){
         const response = await this.responsesRepo.findOne(id);
         this.responsesRepo.merge(response, body);
         return this.responsesRepo.save(response);
