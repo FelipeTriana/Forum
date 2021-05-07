@@ -56,6 +56,7 @@ export class PublicationsController {
             const verified = await this.verifyTokenService.verifyToken(token);
             console.log(verified)
             body.name = verified.user;
+            body.fullname = `${verified.name} ${verified.lastname}`
             let resultado = await this.publicationsService.create(body);
             return res.status(200).json(resultado);
 

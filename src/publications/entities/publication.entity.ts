@@ -10,8 +10,20 @@ export class Publication{
     @Column({ length: 200, default: 'anon' })
     name: string;
 
+    @Column({ length: 200, default: '-' })
+    fullname: string;
+
+    @Column({ length: 200, default: '-' })
+    subject: string;
+
     @Column({ length: 800, default: 'Vacio' })
     description: string;
+
+    @Column({default: 0})
+    like: number;
+
+    @Column({default: 0})
+    dislike: number;
 
     @CreateDateColumn({
         name: 'creation_at',
