@@ -1,8 +1,10 @@
-import { Controller, Get, Post, Put, Delete, Param, Body, Req, Res } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, Req, Res, UseInterceptors ,UploadedFile} from '@nestjs/common';
 import { Request, Response } from 'express';
 import { ResponsesService } from './../services/responses.service';
 import { VerifyTokenService } from '../../verifytoken/verifytoken.service';
-
+import { Observable } from 'rxjs';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { Express} from 'express'
 
 @Controller('responses')
 export class ResponsesController {
@@ -112,6 +114,27 @@ export class ResponsesController {
             })
         }
 
+    }
+
+    @Post('file')
+    @UseInterceptors(FileInterceptor('file'))
+    async uploadFile(@Body() body: any,@UploadedFile() file: Express.Multer.File,@Req() req: Request, @Res() res: Response) {
+      console.log(file);
+      try {
+        const token = req.headers['authorization'];
+        const verified = await this.verifyTokenService.verifyToken(token);
+      //  body.author = verified.user;
+        //
+        //let resultado = await this.responsesService.create(body);
+        return res.status(200).json("Well done");
+
+    } catch (error) {
+        
+        res.status(400).json({
+            error: 'Para publicar debe estar logueado. Token invalido'
+
+        })
+    }
     }
 
 

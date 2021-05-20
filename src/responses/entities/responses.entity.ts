@@ -15,6 +15,12 @@ export class Response{
     @Column({ length: 800, default: 'Vacio' })
     description: string;
 
+    @Column({ type: "int", default: 0 })
+    likes: number;
+
+    @Column({ type: "int", default: 0 })
+    dislikes: number;
+
     @CreateDateColumn({
         name: 'creation_at',
         type: 'timestamptz',
