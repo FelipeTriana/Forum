@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Put, Delete, Param, Body, Req, Res } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, Req, Res, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { PublicationsService } from './../services/publications.service';
 import { VerifyTokenService } from '../../verifytoken/verifytoken.service';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('publications')
 export class PublicationsController {
@@ -49,12 +50,15 @@ export class PublicationsController {
     }
 
     @Post()
-    async create(@Body() body: any, @Req() req: Request, @Res() res: Response) {
+    @UseInterceptors(FileInterceptor('myBufferColumn'))
+    async create(@UploadedFile() file, @Body() body: any, @Req() req: Request, @Res() res: Response) {
 
         try {
             const token = req.headers['authorization'];
             const verified = await this.verifyTokenService.verifyToken(token);
             console.log(verified)
+            console.log(file);
+            body.myBufferColumn = file;
             body.name = verified.user;
             body.fullname = `${verified.name} ${verified.lastname}`
             let resultado = await this.publicationsService.create(body);
@@ -68,6 +72,7 @@ export class PublicationsController {
         }
 
     }
+
 
     @Put(':id')
     async update(@Param('id') id: number, @Body() body: any, @Req() req: Request, @Res() res: Response) {

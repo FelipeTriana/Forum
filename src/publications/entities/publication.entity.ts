@@ -35,5 +35,11 @@ export class Publication{
     @UpdateDateColumn({ name: 'updated_at', type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
     updatedAt: Date;
 
+    @Column({
+      type: 'bytea',
+      nullable: true
+  })
+  myBufferColumn?: Buffer;
+
     
 }
