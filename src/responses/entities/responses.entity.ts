@@ -5,7 +5,7 @@ export class Response{
 
     @PrimaryGeneratedColumn()
     id: number;
-
+ 
     @Column({ type: "int" })
     publication_id: number;
 
