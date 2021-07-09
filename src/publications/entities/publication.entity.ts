@@ -35,11 +35,12 @@ export class Publication{
     @UpdateDateColumn({ name: 'updated_at', type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
     updatedAt: Date;
 
-    @Column({
-      type: 'bytea',
-      nullable: true
-  })
-  myBufferColumn?: Buffer;
+    @Column({ length: 200, default: 'not image' })
+    image: string;
 
     
 }
+
+/*Sript para generar una migracion: npm run migrations:generate -- nameMigration
+  Sript para correr migraciones:    npm run migrations:run
+*/

@@ -1,8 +1,10 @@
-import { Controller, Get, Post, Put, Delete, Param, Body, Req, Res, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, Req, Res, UseInterceptors, UploadedFile, UploadedFiles } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { PublicationsService } from './../services/publications.service';
 import { VerifyTokenService } from '../../verifytoken/verifytoken.service';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { editFileName, imageFileFilter } from '../../utils/file-upload.utils';
 
 @Controller('publications')
 export class PublicationsController {
@@ -49,24 +51,51 @@ export class PublicationsController {
         }
     }
 
-    @Post()
-    @UseInterceptors(FileInterceptor('myBufferColumn'))
-    async create(@UploadedFile() file, @Body() body: any, @Req() req: Request, @Res() res: Response) {
 
+
+    @Post('upload')
+    @UseInterceptors(
+        FileInterceptor('file', {
+            storage: diskStorage({
+              destination: './uploads',
+              filename: editFileName,
+            }),
+            fileFilter: imageFileFilter,
+            
+          }),
+      ) 
+      uploadSingle(@UploadedFile() file, @Res() res: Response) {
+        res.status(200).json({
+             file
+        });
+      }
+
+    @Post()
+    @UseInterceptors(FileInterceptor('file', {
+        storage: diskStorage({
+          destination: './uploads',
+          filename: editFileName,
+        }),
+        fileFilter: imageFileFilter,
+        
+      }),)
+    async create(@UploadedFile() file, @Body() body: any, @Req() req: Request, @Res() res: Response) {
+ 
         try {
             const token = req.headers['authorization'];
             const verified = await this.verifyTokenService.verifyToken(token);
             console.log(verified)
-            console.log(file);
-            body.myBufferColumn = file;
+            console.log(file.path);
+            body.image = file.path;
             body.name = verified.user;
+            console.log(body);
             body.fullname = `${verified.name} ${verified.lastname}`
             let resultado = await this.publicationsService.create(body);
             return res.status(200).json(resultado);
 
         } catch (error) {
             res.status(400).json({
-                error: 'Para publicar debe estar logueado. Token invalido'
+                error
 
             })
         }
