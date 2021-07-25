@@ -1,46 +1,52 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 @Entity()
-export class Publication{
+export class Publication {
+  @PrimaryGeneratedColumn()
+  id: number;
 
+  @Column({ length: 200, default: 'anon' })
+  name: string;
 
-    @PrimaryGeneratedColumn()
-    id: number;
+  @Column({ length: 200, default: '-' })
+  fullname: string;
 
-    @Column({ length: 200, default: 'anon' })
-    name: string;
+  @Column({ length: 200, default: '-' })
+  subject: string;
 
-    @Column({ length: 200, default: '-' })
-    fullname: string;
+  @Column({ length: 800, default: 'Vacio' })
+  description: string;
 
-    @Column({ length: 200, default: '-' })
-    subject: string;
+  @Column({ default: 0 })
+  like: number;
 
-    @Column({ length: 800, default: 'Vacio' })
-    description: string;
+  @Column({ default: 0 })
+  dislike: number;
 
-    @Column({default: 0})
-    like: number;
+  @CreateDateColumn({
+    name: 'creation_at',
+    type: 'timestamptz',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  creationAt: Date;
 
-    @Column({default: 0})
-    dislike: number;
+  @UpdateDateColumn({
+    name: 'updated_at',
+    type: 'timestamptz',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  updatedAt: Date;
 
-    @CreateDateColumn({
-        name: 'creation_at',
-        type: 'timestamptz',
-        default: () => 'CURRENT_TIMESTAMP',
-      })
-      creationAt: Date;
-      
-    @UpdateDateColumn({ name: 'updated_at', type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
-    updatedAt: Date;
-
-    @Column({ length: 200, default: 'not image' })
-    image: string;
-
-    
+  @Column({ length: 200, default: 'not image' })
+  image: string;
 }
 
-/*Sript para generar una migracion: npm run migrations:generate -- nameMigration
-  Sript para correr migraciones:    npm run migrations:run
+/*Script para generar una migracion: npm run migrations:generate -- nameMigration
+  Script para correr migraciones:    npm run migrations:run
 */

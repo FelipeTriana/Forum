@@ -7,14 +7,15 @@ import { Publication } from './entities/publication.entity';
 import { VerifyTokenService } from '../verifytoken/verifytoken.service';
 import { JwtModule } from '@nestjs/jwt';
 
-
 @Module({
-  imports: [TypeOrmModule.forFeature([Publication]),JwtModule.register({
-    secret: '50f14-J50Nw3bT0k3n'
-  }
-  )],
+  imports: [
+    TypeOrmModule.forFeature([Publication]),
+    JwtModule.register({
+      secret: '50f14-J50Nw3bT0k3n',
+    }),
+  ],
   providers: [PublicationsService, VerifyTokenService],
   controllers: [PublicationsController],
-  exports: [VerifyTokenService ]
+  exports: [VerifyTokenService],
 })
 export class PublicationsModule {}
