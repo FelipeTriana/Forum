@@ -7,7 +7,10 @@ import { ResponsesModule } from './responses/responses.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot(),
+    TypeOrmModule.forRoot({
+    retryDelay: 3000, 
+    retryAttempts: 10
+    }),
     PublicationsModule,
     VerifytokenModule,
     ResponsesModule,
