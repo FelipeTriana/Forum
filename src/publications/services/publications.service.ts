@@ -26,11 +26,28 @@ export class PublicationsService {
 
   async update(id: number, body: any) {
     const publication = await this.publicationsRepo.findOne(id);
+    if (body.image) {
+      const fs = require('fs');
+      try {
+        await fs.unlinkSync(publication.image);
+        console.log('Imagen eliminada');
+      } catch (err) {
+        console.error('La publicacion no tiene imagen');
+      }
+    }
     this.publicationsRepo.merge(publication, body);
     return this.publicationsRepo.save(publication);
   }
 
   async delete(id: number) {
+    let publication = await this.findOne(id);
+    const fs = require('fs');
+    try {
+      await fs.unlinkSync(publication.image);
+      console.log('Imagen eliminada');
+    } catch (err) {
+      console.error('La publicacion no tiene imagen');
+    }
     await this.publicationsRepo.delete(id);
     return true;
   }

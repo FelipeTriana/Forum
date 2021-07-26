@@ -10,12 +10,11 @@ import {
   Res,
   UseInterceptors,
   UploadedFile,
-  UploadedFiles,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { PublicationsService } from './../services/publications.service';
 import { VerifyTokenService } from '../../verifytoken/verifytoken.service';
-import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { editFileName, imageFileFilter } from '../../utils/file-upload.utils';
 
@@ -80,8 +79,10 @@ export class PublicationsController {
       const token = req.headers['authorization'];
       const verified = await this.verifyTokenService.verifyToken(token);
       console.log(verified);
-      console.log(file.path);
-      body.image = file.path;
+      if (file) {
+        console.log(file.path);
+        body.image = file.path;
+      }
       body.name = verified.user;
       console.log(body);
       body.fullname = `${verified.name} ${verified.lastname}`;
@@ -95,7 +96,17 @@ export class PublicationsController {
   }
 
   @Put(':id')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: './uploads',
+        filename: editFileName,
+      }),
+      fileFilter: imageFileFilter,
+    }),
+  )
   async update(
+    @UploadedFile() file,
     @Param('id') id: number,
     @Body() body: any,
     @Req() req: Request,
@@ -105,9 +116,12 @@ export class PublicationsController {
       const token = req.headers['authorization'];
       let verified = await this.verifyTokenService.verifyToken(token);
       console.log(verified);
+      if (file) {
+        console.log(file.path);
+        body.image = file.path;
+      }
       let test = await this.publicationsService.findOne(id);
-      if (test.name === verified.user) {
-        console.log(`${test.name} y ${verified.user} son iguales`);
+      if (test.name === verified.user) {             //Verifica que se trate del propietario de la publicacion
         let resultado = await this.publicationsService.update(id, body);
         return res.status(200).json(resultado);
       } else {
@@ -132,8 +146,7 @@ export class PublicationsController {
       let verified = await this.verifyTokenService.verifyToken(token);
       console.log(verified);
       let test = await this.publicationsService.findOne(id);
-      if (test.name === verified.user) {
-        console.log(`${test.name} y ${verified.user} son iguales`);
+      if (test.name === verified.user) {     //Verifica que se trate del propietario de la publicacion
         let resultado = await this.publicationsService.delete(id);
         return res.status(200).json(resultado);
       } else {
@@ -142,25 +155,9 @@ export class PublicationsController {
       }
     } catch (error) {
       res.status(400).json({
-        error: 'No puede eliminar esta publicacion. Token invalido',
+        error:
+          'No puede eliminar esta publicacion porque no existe o el token es invalido',
       });
     }
   }
-
-  /*@Post('upload')
-    @UseInterceptors(
-        FileInterceptor('file', {
-            storage: diskStorage({
-              destination: './uploads',
-              filename: editFileName,
-            }),
-            fileFilter: imageFileFilter,
-            
-          }),
-      ) 
-      uploadSingle(@UploadedFile() file, @Res() res: Response) {
-        res.status(200).json({
-             file
-        });
-      }*/
 }
